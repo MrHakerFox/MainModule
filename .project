@@ -59,5 +59,10 @@
 			<type>2</type>
 			<location>E:/My/Projects/SMART_HOME_NG/COMMON</location>
 		</link>
+		<link>
+			<name>CONFIGS</name>
+			<type>2</type>
+			<location>E:/My/Projects/SMART_HOME_NG/CONFIGS</location>
+		</link>
 	</linkedResources>
 </projectDescription>

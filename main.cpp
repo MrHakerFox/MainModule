@@ -19,11 +19,16 @@
 
 #include <FWakeMaster.hpp>
 #include "shc_config.hpp"
+#include <FPHY.hpp>
+
 
 
 
 using namespace std;
 
+
+
+FWakeMaster wmaster;
 
 
 int main()
@@ -58,9 +63,31 @@ int main()
 		}
 	}
 
-	cout << endl << "Found " << lineCnt << "modules.";
+	cout << endl << "Found " << lineCnt << " modules.";
 
 	netCfgFile.close();
+
+
+	cout << endl << "Trying to open communication port...";
+
+	if( wakePHYOpen( "\\\\.\\COM28" ) == FRetVals::OK )
+		cout << "OK";
+	else
+	{
+		cout << "FAILED!";
+		return 0;
+	}
+
+	uint8_t rxCmd, rxN;
+	FRetVals::value result;
+	result = wmaster.exchange( 0x50, 0x7f, 16, &rxCmd, &rxN );
+	FRetVals::printMsg( result );
+
+	if( result != FRetVals::OK )
+		return 0;
+
+	printf( "\r\nRxCmd 0x%02x, RxN 0x%02x", rxCmd, rxN );
+
 }
 
 

@@ -8,6 +8,9 @@
 #
 #----------------------------------------------------------------------------
 
+
+include dirs.mk
+
 #############  program name
 	TARGET	= shcng
 
@@ -31,22 +34,12 @@
 	CXXFLAGS 	= $(INCS) -I. -c -Wall -ffunction-sections -fdata-sections $( OPTIMIZE )
 	LDFLAGS	= -Wl,--gc-sections
 	
-
-
-#	DIRS
-	OBJDIR			= OBJS/
-
-	COMMONDIR		= ../../COMMON/
 	
-	FWAKEDIR		= $(COMMONDIR)FWake/
-	FWAKEBASEDIR	= $(FWAKEDIR)FWakeBase/
-	FWAKEMASTERDIR	= $(FWAKEDIR)FWakeMaster/
+	FWAKEPHYDIR	= $(COMMONDIR)FWake/FPHYs/windows/
+	
+	DIRS		+= $(FWAKEPHYDIR)
 	
 	
-	DIRS		= ./
-	DIRS		+= $(COMMONDIR)
-	DIRS		+= $(FWAKEBASEDIR)
-	DIRS		+= $(FWAKEMASTERDIR)
 	
 	
 	INCS	:= $(patsubst %, -I "%", $(DIRS)) 
