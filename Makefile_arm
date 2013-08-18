@@ -19,12 +19,25 @@ include dirs.mk
 
 	OPTIMIZE	= -Os
 
-	CC=arm-none-linux-gnueabi-gcc
-	CXX=arm-none-linux-gnueabi-g++
-	LD=arm-none-linux-gnueabi-ld
+	CC=arm-atmel-linux-gnueabi-gcc
+	CXX=arm-atmel-linux-gnueabi-g++
+	LD=arm-atmel-linux-gnueabi-ld
+	
+	CP			= cp
 	
 	CXXFLAGS 	= $(INCS) -I. -c -Wall -ffunction-sections -fdata-sections $( OPTIMIZE ) -L/usr/local/cross-gcc/arm-2007q1/arm-linux/arm-linux/lib
 	LDFLAGS	= -Wl,--gc-sections
+	
+	FWAKEPHYDIR	= $(COMMONDIR)FWake/FPHYs/linux/
+	
+	DIRS		+= $(FWAKEPHYDIR)
+	
+	
+	
+	
+	INCS	:= $(patsubst %, -I "%", $(DIRS)) 
+	SRCS	:= $(wildcard $(addsuffix *.cpp, $(DIRS))) $(wildcard $(addsuffix *.c, $(DIRS))) $(wildcard $(addsuffix *.S, $(DIRS)))
+	OBJS 	:= $(patsubst %.cpp, %.o, $(SRCS))	
 	
 
 
@@ -32,6 +45,7 @@ all: $(OBJS)
 	@echo --linking under ARM...
 	$(CXX) $(LDFLAGS) $(OBJS) -o $(TARGET).exe
 	size $(TARGET).exe
+	$(CP) $(TARGET).exe /tftpboot
 	
 print:
 	@echo $(OBJS)
