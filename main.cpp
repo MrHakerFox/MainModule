@@ -62,6 +62,48 @@ void wakeDelay()
 
 
 
+bool isTimeEq( int h0, int m0 )
+{
+	time_t rawtime;
+	time( & rawtime );
+	struct tm* lt = localtime( &rawtime );
+
+	return ( lt->tm_hour == h0 ) && ( lt->tm_min == m0 );
+}
+
+
+
+bool isTimeBetween( int h0, int m0, int h1, int m1  )
+{
+	time_t rawtime;
+	time( & rawtime );
+	struct tm* lt = localtime( &rawtime );
+
+	int min0 = h0 * 60 + m0;
+	int min1 = h1 * 60 + m1;
+	int min = lt->tm_hour * 60 + lt->tm_min;
+
+	if( ( min1 == min0 ) && ( min1 == min ) )
+	{
+		return true;
+	}
+
+	if( min0 > min1 )
+	{
+		int delta = 1440 - min0;
+		min0 = 0;
+
+		min1 += delta;
+
+		min += delta;
+		min -= 1440;
+	}
+
+	return ( ( min >= min0 ) && ( min <= min1 ) );
+}
+
+
+
 int main( int argc, char *argv[] )
 {
 	cout << endl << endl << "******SHC NG******\r\nAuthor: Yakimov Y.A.";
@@ -192,13 +234,13 @@ int main( int argc, char *argv[] )
 			uint8_t rh = wmaster.getData( 2 );
 
 			wakeDelay();
-			wmaster.exchange( 0x0a, FWakeCMD::FWAKE_CMD_AI6DI2_GET_TEMPS );
+			wmaster.exchange( 0x0a, FWakeCMD::AI6DI2_GET_TEMPS );
 
 			// Get key from OP
 			wakeDelay();
 			wmaster.setDataInd( wmaster.getData( 2 ), 0 );
 			wmaster.setDataInd( wmaster.getData( 3 ), 1 );
-			wmaster.setDataInd( wmaster.getData( rh ), 2 );
+			wmaster.setDataInd( rh, 2 );
 			wmaster.exchange( 0x0b, FWakeCMD::OPSIMPLE_GET_STATE, 1 );
 			if( wmaster.getData( 0 ) == 1 )
 			{
@@ -222,6 +264,69 @@ int main( int argc, char *argv[] )
 				wmaster.setDataInd( localTime->tm_min, 4 );
 				wmaster.setDataInd( localTime->tm_sec, 5 );
 				wmaster.exchange( 0x0b, FWakeCMD::OPSIMPLE_SET_DT, 6 );
+			}
+
+			if( isTimeBetween( 7, 0, 23, 0 ) )
+			{
+				// Kitchen 100
+				wmaster.setDataInd( 100 );
+			}
+			else
+			{
+				// Kitchen 30
+				wmaster.setDataInd( 30 );
+			}
+
+			wakeDelay();
+			wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_PWM1, 1 );
+
+			if( isTimeBetween( 21, 0, 23, 30 ) )
+			{
+				// KitToilet 100
+				wmaster.setDataInd( 100 );
+			}
+			else
+			{
+				if( isTimeBetween( 23, 31, 6, 0 ) )
+				{
+					// KitToilet 30
+					wmaster.setDataInd( 30 );
+				}
+				else
+				{
+					// KitToilet off
+					wmaster.setDataInd( 0 );
+				}
+			}
+
+			wakeDelay();
+			wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_PWM0, 1 );
+
+			// Door-light
+			wmaster.setDataInd( 2 );
+			if( isTimeBetween( 22, 30, 6, 0 ) )
+			{
+				wakeDelay();
+				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
+			}
+			else
+			{
+				wakeDelay();
+				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_CLR_DI, 1 );
+			}
+
+
+			// Toilet light
+			wmaster.setDataInd( 4 );
+			if( isTimeBetween( 20, 0, 23, 30 ) )
+			{
+				wakeDelay();
+				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
+			}
+			else
+			{
+				wakeDelay();
+				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_CLR_DI, 1 );
 			}
 
 
