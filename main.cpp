@@ -83,6 +83,9 @@ bool isTimeBetween( int h0, int m0, int h1, int m1  )
 	int min1 = h1 * 60 + m1;
 	int min = lt->tm_hour * 60 + lt->tm_min;
 
+	// 23:31 1411
+	// 6:0 360
+
 	if( ( min1 == min0 ) && ( min1 == min ) )
 	{
 		return true;
@@ -96,7 +99,8 @@ bool isTimeBetween( int h0, int m0, int h1, int m1  )
 		min1 += delta;
 
 		min += delta;
-		min -= 1440;
+		if( min > 1440 )
+			min -= 1440;
 	}
 
 	return ( ( min >= min0 ) && ( min <= min1 ) );
