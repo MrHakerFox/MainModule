@@ -229,19 +229,88 @@ int main( int argc, char *argv[] )
 			}
 
 			wakeDelay();
-			wmaster.exchange( 0x08, FWakeCMD::HUB_PORCH_GET_ST_TEMP_RH );
+			result = wmaster.exchange( 0x08, FWakeCMD::HUB_PORCH_GET_ST_TEMP_RH );
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
 
 			uint8_t rh = wmaster.getData( 2 );
 
 			wakeDelay();
-			wmaster.exchange( 0x0a, FWakeCMD::AI6DI2_GET_TEMPS );
+			result = wmaster.exchange( 0x0a, FWakeCMD::AI6DI2_GET_TEMPS );
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
 
 			// Get key from OP
 			wakeDelay();
 			wmaster.setDataInd( wmaster.getData( 2 ), 0 );
 			wmaster.setDataInd( wmaster.getData( 3 ), 1 );
 			wmaster.setDataInd( rh, 2 );
-			wmaster.exchange( 0x0b, FWakeCMD::OPSIMPLE_GET_STATE, 1 );
+			result = wmaster.exchange( 0x0b, FWakeCMD::OPSIMPLE_GET_STATE, 3 );
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
 			if( wmaster.getData( 0 ) == 1 )
 			{
 				cellarLight = !cellarLight;
@@ -249,7 +318,30 @@ int main( int argc, char *argv[] )
 
 			wakeDelay();
 			wmaster.setDataInd( 8, 0 );
-			wmaster.exchange( 0x09, cellarLight ? FWakeCMD::DO4PWM2_SET_DI : FWakeCMD::DO4PWM2_CLR_DI, 1 );
+			result = wmaster.exchange( 0x09, cellarLight ? FWakeCMD::DO4PWM2_SET_DI : FWakeCMD::DO4PWM2_CLR_DI, 1 );
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
 
 			time( & rawtime );
 			localTime = localtime( &rawtime );
@@ -278,9 +370,32 @@ int main( int argc, char *argv[] )
 			}
 
 			wakeDelay();
-			wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_PWM1, 1 );
+			result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_PWM1, 1 );
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
 
-			if( isTimeBetween( 21, 0, 23, 30 ) )
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
+
+			if( isTimeBetween( 21, 0, 23, 30 ) || isTimeBetween( 6, 1, 8, 0 ) )
 			{
 				// KitToilet 100
 				wmaster.setDataInd( 100 );
@@ -300,19 +415,65 @@ int main( int argc, char *argv[] )
 			}
 
 			wakeDelay();
-			wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_PWM0, 1 );
+			result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_PWM0, 1 );
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
 
 			// Door-light
 			wmaster.setDataInd( 2 );
-			if( isTimeBetween( 22, 30, 6, 0 ) )
+			if( isTimeBetween( 22, 0, 7, 0 ) )
 			{
 				wakeDelay();
-				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
+				result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
 			}
 			else
 			{
 				wakeDelay();
-				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_CLR_DI, 1 );
+				result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_CLR_DI, 1 );
+			}
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
 			}
 
 
@@ -321,12 +482,101 @@ int main( int argc, char *argv[] )
 			if( isTimeBetween( 20, 0, 23, 30 ) )
 			{
 				wakeDelay();
-				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
+				result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
 			}
 			else
 			{
 				wakeDelay();
-				wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_CLR_DI, 1 );
+				result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_CLR_DI, 1 );
+			}
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+			}
+
+			wakeDelay();
+			result = wmaster.exchange( 0x08, FWakeCMD::HUB_PORCH_GET_SSTM, 0 );
+			if( result == FRetVals::OK )
+			{
+				if( wmaster.getData( 1 ) & 0x01 )
+				{
+					// TM has been touched
+					wakeDelay();
+					result = wmaster.exchange( 0x08, FWakeCMD::HUB_PORCH_GET_TMEM, 0 );
+					if( result == FRetVals::OK )
+					{
+						printf( "TM on hubPorch:" );
+						for( int i = 0; i < 6; i++ )
+						{
+							printf( "%02X", wmaster.getData( i ) );
+						}
+					}
+					if( result != FRetVals::OK )
+					{
+						printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+						FRetVals::printMsg( result );
+
+						FWakeHeader lastTx = wmaster.getLastTxHeader();
+						FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+						printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+						printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+						printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+						printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+						printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+						printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+						printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+						printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+						printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+						printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+						printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+						printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
+					}
+				}
+			}
+			if( result != FRetVals::OK )
+			{
+				printf( "\r\n\r\n\r\nAddr: 0x%02X", addr );
+				FRetVals::printMsg( result );
+
+				FWakeHeader lastTx = wmaster.getLastTxHeader();
+				FWakeHeader lastRx = wmaster.getLastRxHeader();
+
+				printf( "\r\nLast Tx Address: 0x%02X", lastTx.addr );
+				printf( "\r\nLast Tx Command: 0x%02X", lastTx.cmd );
+				printf( "\r\nLast Tx Num Of : 0x%02X", lastTx.n );
+
+				printf( "\r\nLast Rx Address: 0x%02X", lastRx.addr );
+				printf( "\r\nLast Rx Command: 0x%02X", lastRx.cmd );
+				printf( "\r\nLast Rx Num Of : 0x%02X", lastRx.n );
+
+				printf( "\r\n\r\nTx total: %i", wmaster.getTxTotal() );
+				printf( "\r\nTx totalFailed: %i", wmaster.getTxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getTxTotalFailed() / ( float )wmaster.getTxTotal() * 100  );
+				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
+				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
+				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
 			}
 
 
