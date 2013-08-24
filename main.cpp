@@ -190,6 +190,7 @@ int main( int argc, char *argv[] )
 	//wmaster.exchange( 0x09, 0x43, 1 );
 
 	bool cellarLight = false;
+	bool streetToiletLight = false;
 
 	time_t rawtime;
 	time( & rawtime );
@@ -319,6 +320,15 @@ int main( int argc, char *argv[] )
 			{
 				cellarLight = !cellarLight;
 			}
+
+			if( wmaster.getData( 0 ) == 2 )
+			{
+				streetToiletLight = !streetToiletLight;
+			}
+
+			wmaster.setDataInd( 4 );
+			wakeDelay();
+			result = wmaster.exchange( 0x09, streetToiletLight ? FWakeCMD::DO4PWM2_SET_DI : FWakeCMD::DO4PWM2_CLR_DI, 1 );
 
 			wakeDelay();
 			wmaster.setDataInd( 8, 0 );
@@ -482,8 +492,8 @@ int main( int argc, char *argv[] )
 
 
 			// Toilet light
-			wmaster.setDataInd( 4 );
-			if( isTimeBetween( 20, 0, 23, 30 ) )
+			/*wmaster.setDataInd( 4 );
+			if( isTimeBetween( 20, 0, 2, 30 ) )
 			{
 				wakeDelay();
 				result = wmaster.exchange( 0x09, FWakeCMD::DO4PWM2_SET_DI, 1 );
@@ -515,7 +525,7 @@ int main( int argc, char *argv[] )
 				printf( "\r\n\r\nRx total: %i", wmaster.getRxTotal() );
 				printf( "\r\nRx totalFailed: %i", wmaster.getRxTotalFailed() );
 				printf( "\r\nError: %.2f", ( float )wmaster.getRxTotalFailed() / ( float )wmaster.getRxTotal() * 100  );
-			}
+			}*/
 
 			wakeDelay();
 			result = wmaster.exchange( 0x08, FWakeCMD::HUB_PORCH_GET_SSTM, 0 );
